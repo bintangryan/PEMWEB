@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kalkulator Sederhana</title>
+    <style>
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kalkulator Sederhana</h1>
+    
+    <input type="text" id="inputBox" oninput="calculate()" style="font-size: 18px;">
+    
+    <div>
+        <button onclick="addToInput('+')">+</button>
+        <button onclick="addToInput('-')">-</button>
+        <button onclick="addToInput('*')">*</button>
+        <button onclick="addToInput('/')">/</button>
+    </div>
+    
+    <button onclick="clearInput()">Clear</button>
+    
+    <p>Hasil: <span id="result">0</span></p>
+    
+    <script>
+        function addToInput(value) {
+            document.getElementById('inputBox').value += value;
+        }
+
+        function calculate() {
+            var inputExpression = document.getElementById('inputBox').value;
+            try {
+                var result = eval(inputExpression);
+                document.getElementById('result').textContent = result;
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error';
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('inputBox').value = '';
+            document.getElementById('result').textContent = '0';
+        }
+    </script>
+</body>
+</html>
+
+
+
+

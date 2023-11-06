@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencarian Informasi Film</title>
+    <!--<link rel="stylesheet" href="style.css"> Tautan ke file CSS Anda -->
+    <style>
+    body, h1, h2, h3, p, ul, li, input, button {
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #1a1a18; /* Warna latar belakang hitam */
+        color: #cd9a0e; /* Warna teks putih */
+    }
+    
+    h1 {
+        text-align: center;
+        background-color: #ffd817; /* Warna emas */
+        padding: 20px;
+        color: #664e0b; /* Warna teks judul hitam */
+    }
+    
+    #movieTitle {
+        margin: 24px;
+        padding: 2px;
+        border: 3px solid #cd9a0e; /* Warna border putih */
+    }
+    
+    button {
+        background-color: #ffd817; /* Warna tombol putih */
+        color: #664e0b; /* Warna teks tombol hitam */
+        border: 3px solid #cd9a0e; /* Warna border putih */
+        padding: 4px 10px;
+        cursor: pointer;
+    }
+    
+    button:hover {
+        background-color: #cd9a0e; /* Warna emas */
+        color: #ffee96;
+    }
+    
+    #movieList {
+        list-style: none;   
+        margin: 0px;
+        padding: 48px;
+    }
+    
+    .movie-container {
+        display: flex;
+        align-items: center;
+        background-color: #1a1a18; /* Warna latar belakang putih */
+        color: #d4d4d4; /* Warna teks hitam */
+        margin: 36px; /* Spasi antara poster film */
+        padding: 10px;
+        border-radius: 20px; /* Melengkungkan komponen film */
+    }
+    
+    /* Spasi antara tulisan film dan poster */
+    .movie-details {
+        margin-left: 20px;
+        flex: 1; /* Ini akan memastikan bahwa informasi film mengisi sebanyak mungkin ruang yang tersedia */
+    }
+    
+    /* Jarak antara judul dan detil informasi */
+    .movie-container h2 {
+        margin-bottom: 10px;
+    }
+    
+    /* Gaya untuk elemen bintang */
+    .star-rating {
+        display: inline-block;
+        font-size: 24px;
+        color: #ffcc00; /* Warna emas */
+    }
+    
+    </style>
+</head>
+<body>
+    <h1>LayarKaca21</h1>
+    <label for="movieTitle">Judul Film:</label>
+    <input type="text" id="movieTitle">
+    <button onclick="searchMovies()">Search</button>
+    <div id="movieList"></div>
+
+    <script>
+        function searchMovies() {
+            const apiKey = '31e5238'; // Gantilah dengan API Key Anda dari OMDB API
+            const movieTitle = document.getElementById('movieTitle').value;
+
+            const apiUrl = `https://www.omdbapi.com/?apikey=${apiKey}&s=${movieTitle}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.Response === "True") {
+                        // Film ditemukan, tampilkan hasil pencarian
+                        const movieList = document.getElementById('movieList');
+                        movieList.innerHTML = ''; // Bersihkan daftar sebelum menambahkan hasil pencarian baru
+
+                        data.Search.forEach(movie => {
+                            // Ambil informasi detail untuk setiap film berdasarkan IMDb ID
+                            const detailApiUrl = `https://www.omdbapi.com/?apikey=${apiKey}&i=${movie.imdbID}`;
+
+                            fetch(detailApiUrl)
+                                .then(response => response.json())
+                                .then(detailData => {
+                                    const movieContainer = document.createElement('div');
+                                    movieContainer.className = 'movie-container';
+
+                                    // Poster film
+                                    const poster = document.createElement('img');
+                                    poster.src = detailData.Poster;
+                                    poster.alt = `${detailData.Title} Poster`;
+                                    movieContainer.appendChild(poster);
+
+                                    // Informasi lainnya di sebelah kanan poster
+                                    const movieDetails = document.createElement('div');
+                                    movieDetails.className = 'movie-details';
+
+                                    // Judul di atas poster
+                                    const title = document.createElement('h2');
+                                    title.textContent = detailData.Title;
+                                    movieDetails.appendChild(title);
+
+                                    // Rating IMDb dengan elemen bintang
+                                    const rating = document.createElement('p');
+                                    rating.innerHTML = `Rating IMDb: <span class="star-rating star-${Math.round(detailData.imdbRating)}"></span>`;
+                                    movieDetails.appendChild(rating);
+
+                                    // Sinopsis
+                                    const plot = document.createElement('p');
+                                    plot.textContent = `Sinopsis: ${detailData.Plot}`;
+                                    movieDetails.appendChild(plot);
+
+                                    // Tambahkan informasi ke dalam daftar
+                                    movieContainer.appendChild(movieDetails);
+                                    movieList.appendChild(movieContainer);
+                                })
+                                .catch(error => {
+                                    console.error("Terjadi kesalahan dalam mengambil data film:", error);
+                                });
+                        });
+                    } else {
+                        // Film tidak ditemukan atau terjadi kesalahan
+                        alert("Film tidak ditemukan atau terjadi kesalahan.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Terjadi kesalahan dalam mengambil data film:", error);
+                });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
